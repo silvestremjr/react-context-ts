@@ -1,26 +1,59 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import {
+  ChangeEvent,
+  createContext,
+  ReactNode,
+  useContext,
+  useState,
+} from "react";
+import "./App.css";
 
-function App() {
+interface ICountry {
+  country: string;
+  handleChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+}
+
+const CountryContext = createContext<ICountry | null>(null);
+
+function CountryProvider({ children }: { children: ReactNode }) {
+  const [country, setCountry] = useState<string>("");
+
+  const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setCountry(event.target.value);
+  };
+
+  return (
+    <CountryContext.Provider value={{ country, handleChange }}>
+      {children}
+    </CountryContext.Provider>
+  );
+}
+
+export default function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <CountryProvider>
+        <CountryPicker />
+        <CountryDetails />
+      </CountryProvider>
     </div>
   );
 }
 
-export default App;
+function CountryDetails() {
+  const { country } = useCountryContext();
+  return <h1>{country}</h1>;
+}
+
+function CountryPicker() {
+  const { country, handleChange } = useCountryContext();
+
+  return (
+    <select value={country} onChange={handleChange}>
+      <option value="">Select a country</option>
+      <option value="CA">Canada</option>
+      <option value="CO">Colombia</option>
+    </select>
+  );
+}
+
+const useCountryContext = () => useContext(CountryContext)!;
