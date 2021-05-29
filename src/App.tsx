@@ -50,8 +50,9 @@ function CountryPicker() {
   return (
     <select value={country} onChange={handleChange}>
       <option value="">Select a country</option>
+      <option value="BR">Brazil</option>
       <option value="CA">Canada</option>
-      <option value="CO">Colombia</option>
+      <option value="US">USA</option>
     </select>
   );
 }
